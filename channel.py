@@ -23,7 +23,7 @@ class Axis(object):
     def __init__(self,name = '1',stepAmp = 50,rate = RATE,controller = None):
         
         if controller == None:
-            raise ValueError('You cannot initialize an Axis without a controller')
+            raise(ValueError('You cannot initialize an Axis without a controller'))
         self.controller = controller
         self.name = name
         self.rate = rate

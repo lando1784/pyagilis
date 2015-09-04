@@ -25,7 +25,7 @@ class AGPort(s.Serial):
             super(AGPort,self).__init__(portName,921600,s.EIGHTBITS,s.PARITY_NONE,s.STOPBITS_ONE)
             self.soul = 'p'
         except Exception as e:
-            print e.message
+            print(e.message)
             self.soul = None
             return None
     
@@ -54,4 +54,6 @@ class AGPort(s.Serial):
         if self.isAquery(command):
             response = self.readline()
         return  response
-            
+    
+    
+ 
