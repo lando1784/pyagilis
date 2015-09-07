@@ -28,8 +28,8 @@ class Axis(object):
         self.name = name
         self.rate = rate
         self.stepAmp = str(stepAmp) if 0<stepAmp<=50 else str(50)
-        self.controller.port.sendString(name+'SU+'+self.stepAmp+'\n')
-        self.controller.port.sendString(name+'SU-'+self.stepAmp+'\n')
+        self.controller.port.sendString(name+'SU+'+self.stepAmp+'\r\n')
+        self.controller.port.sendString(name+'SU-'+self.stepAmp+'\r\n')
         
         self.__lastOp__ = 'opened'
     
@@ -74,9 +74,7 @@ class Axis(object):
             return False
         
         self.__lastOp__ = 'jogged: '+str(steps)
-        self.controller.port.sendString(self.name+'PR'+str(int(steps))+'\n')
-        #if abs(steps) > 300:
-        #    self.amIstill(50)
+        self.controller.port.sendString(self.name+'PR'+str(int(steps))+'\r\n')
     
     
     def goMax(self,speedTag = LIMSPEED):
@@ -88,8 +86,7 @@ class Axis(object):
             return False 
             
         self.__lastOp__ = 'goneMax'
-        self.controller.port.sendString(self.name+'MV'+str(speedTag)+'\n')
-        #self.amIstill(self.rate)
+        self.controller.port.sendString(self.name+'MV'+str(speedTag)+'\r\n')
     
     
     def goMin(self,speedTag = LIMSPEED):
@@ -101,8 +98,7 @@ class Axis(object):
             return False
             
         self.__lastOp__ = 'goneMin'
-        self.controller.port.sendString(self.name+'MV'+str(-1*speedTag)+'\n')
-        #self.amIstill(self.rate)
+        self.controller.port.sendString(self.name+'MV'+str(-1*speedTag)+'\r\n')
             
         
     def nowToMilliseconds(self):

@@ -117,4 +117,138 @@ class AGUC2(object):
         self.mThread.start()
             
         
-            
+
+class AGUC8(object):
+    
+    def __init__(self,portName,activeChannels = ['1'], axis1alias = 'X', axis2alias = 'Y', stepAmp1 = 50, stepAmp2 = 50):
+        
+        self.port = AGPort(portName)
+        self.channels = {1:{axis1alias:None,axis2alias:None},
+                         2:{axis1alias:None,axis2alias:None},
+                         3:{axis1alias:None,axis2alias:None},
+                         4:{axis1alias:None,axis2alias:None}}
+        
+        self.aliases = [axis1alias,axis2alias]
+        
+        for c in activeChannels:
+            self.addAxis(c,'1',axis1alias,stepAmp1)
+            self.addAxis(c,'2',axis2alias,stepAmp2)
+        
+        self.mThread = MotorThread()
+        
+        if not self.port.amInull():
+            self.port.sendString('MR\r\n')
+            self.port.sendString('CC'+str(activeChannels[0])+'\r\n')
+            self
+        
+        
+    def chchch(self,ch):
+        
+        #CHeck and CHange CHannel
+        
+        channel = int(self.port.sendString('CC?\r\n')[2:])
+        if channel != ch:
+            self.port.sendString('CC'+str(ch)+'\r\n')
+        
+        
+    def addAxis(self,channel,name,alias,stepAmp):
+        
+        if alias not in self.aliases:
+            raise KeyError('You used an invalid axis name')
+        self.channels[channel][alias] = Axis(name,stepAmp,controller = self)
+    
+    
+    def move(self,ch,d1,d2):
+        
+        self.chchch(ch)
+        
+        self.channels[ch][self.aliases[0]].jog(d1)
+        self.channels[ch][self.aliases[0]].amIstill(100)
+        self.channels[ch][self.aliases[1]].jog(d2)
+        self.channels[ch][self.aliases[1]].amIstill(100)
+        
+    
+    def moveUpUp(self,ch):
+        
+        self.chchch(ch)
+        
+        self.channels[ch][self.aliases[0]].goMax()
+        self.channels[ch][self.aliases[0]].amIstill(RATE)
+        self.channels[ch][self.aliases[1]].goMax()
+        self.channels[ch][self.aliases[1]].amIstill(RATE)
+        
+        
+    def moveDownDown(self,ch):
+        
+        self.chchch(ch)
+        
+        self.channels[ch][self.aliases[0]].goMin()
+        self.channels[ch][self.aliases[0]].amIstill(RATE)
+        self.channels[ch][self.aliases[1]].goMin()
+        self.channels[ch][self.aliases[1]].amIstill(RATE)
+        
+        
+    def moveDownUp(self,ch):
+        
+        self.chchch(ch)
+        
+        self.channels[ch][self.aliases[0]].goMin()
+        self.channels[ch][self.aliases[0]].amIstill(RATE)
+        self.channels[ch][self.aliases[1]].goMax()
+        self.channels[ch][self.aliases[1]].amIstill(RATE)
+        
+        
+    def moveUpDown(self,ch):
+        
+        self.chchch(ch)
+        
+        self.channels[ch][self.aliases[0]].goMax()
+        self.channels[ch][self.aliases[0]].amIstill(RATE)
+        self.channels[ch][self.aliases[1]].goMin()
+        self.channels[ch][self.aliases[1]].amIstill(RATE)
+        
+        
+    def goToZero(self,ch):
+        
+        self.chchch(ch)
+        
+        steps1 = self.channels[ch][self.aliases[0]].queryCounter()
+        steps2 = self.channels[ch][self.aliases[1]].queryCounter()
+        
+        self.channels[ch][self.aliases[0]].jog(-1*steps1)
+        self.channels[ch][self.aliases[0]].amIstill(150)
+        self.channels[ch][self.aliases[1]].jog(-1*steps2)
+        self.channels[ch][self.aliases[1]].amIstill(150)
+        
+    
+    def setZero(self,ch):
+        
+        self.chchch(ch)
+        
+        self.channels[ch][self.aliases[0]].resetCounter()
+        self.channels[ch][self.aliases[1]].resetCounter()
+        
+        
+    def stop(self,ch):
+        
+        self.chchch(ch)
+        
+        if self.mThread.isAlive():
+            self.mThread.stop_at_next_check = True
+            while self.mThread.isAlive():
+                continue
+            self.mThread = MotorThread()
+        self.channels[ch][self.aliases[0]].stop()
+        self.channels[ch][self.aliases[1]].stop()
+        
+    
+    def followApath(self,ch,path):
+        
+        self.chchch(ch)
+        
+        steps = []
+        for p in path:
+            step = lambda: self.move(ch,p[0], p[1])
+            steps.append(step)
+        self.mThread.steps = steps
+        self.mThread.start()
