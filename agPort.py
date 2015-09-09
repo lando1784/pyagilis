@@ -10,15 +10,25 @@
 #
 #
 
+## @package agPort
+# This module contain classes that implements custom versions of python built-in serial port class
+# for the agilis controllers 
+#
 
 import serial as s
 from datetime import datetime
 
+## Documentatio for the AGPort class
+#
+# This class extend the python Serial class with some function that simplifies its use with the agilis controllers commands
 class AGPort(s.Serial):
     
+    ## Class constructor
+    # @param portName The name of the virtual serial port of the chosen controller
     def __init__(self,portName = None):
         
         if portName == None:
+            ## @var AGPort.soul
             self.soul = None
             return None
         try:
