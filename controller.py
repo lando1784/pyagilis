@@ -16,6 +16,7 @@ from mothreading import MotorThread
 
 from time import time,sleep
 
+
 class AGUC2(object):
     
     def __init__(self,portName, axis1alias = 'X', axis2alias = 'Y', stepAmp1 = 50, stepAmp2 = 50):
@@ -123,12 +124,14 @@ class AGUC8(object):
     def __init__(self,portName,activeChannels = ['1'], axis1alias = 'X', axis2alias = 'Y', stepAmp1 = 50, stepAmp2 = 50):
         
         self.port = AGPort(portName)
-        self.channels = {1:{axis1alias:None,axis2alias:None},
-                         2:{axis1alias:None,axis2alias:None},
-                         3:{axis1alias:None,axis2alias:None},
-                         4:{axis1alias:None,axis2alias:None}}
+        self.channels = {'1':{axis1alias:None,axis2alias:None},
+                         '2':{axis1alias:None,axis2alias:None},
+                         '3':{axis1alias:None,axis2alias:None},
+                         '4':{axis1alias:None,axis2alias:None}}
         
         self.aliases = [axis1alias,axis2alias]
+        
+        self.defChannel = activeChannels[0]
         
         for c in activeChannels:
             self.addAxis(c,'1',axis1alias,stepAmp1)
@@ -158,8 +161,10 @@ class AGUC8(object):
         self.channels[channel][alias] = Axis(name,stepAmp,controller = self)
     
     
-    def move(self,ch,d1,d2):
+    def move(self,d1,d2,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         self.channels[ch][self.aliases[0]].jog(d1)
@@ -168,8 +173,10 @@ class AGUC8(object):
         self.channels[ch][self.aliases[1]].amIstill(100)
         
     
-    def moveUpUp(self,ch):
+    def moveUpUp(self,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         self.channels[ch][self.aliases[0]].goMax()
@@ -178,8 +185,10 @@ class AGUC8(object):
         self.channels[ch][self.aliases[1]].amIstill(RATE)
         
         
-    def moveDownDown(self,ch):
+    def moveDownDown(self,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         self.channels[ch][self.aliases[0]].goMin()
@@ -188,8 +197,10 @@ class AGUC8(object):
         self.channels[ch][self.aliases[1]].amIstill(RATE)
         
         
-    def moveDownUp(self,ch):
+    def moveDownUp(self,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         self.channels[ch][self.aliases[0]].goMin()
@@ -198,8 +209,10 @@ class AGUC8(object):
         self.channels[ch][self.aliases[1]].amIstill(RATE)
         
         
-    def moveUpDown(self,ch):
+    def moveUpDown(self,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         self.channels[ch][self.aliases[0]].goMax()
@@ -208,8 +221,10 @@ class AGUC8(object):
         self.channels[ch][self.aliases[1]].amIstill(RATE)
         
         
-    def goToZero(self,ch):
+    def goToZero(self,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         steps1 = self.channels[ch][self.aliases[0]].queryCounter()
@@ -221,16 +236,20 @@ class AGUC8(object):
         self.channels[ch][self.aliases[1]].amIstill(150)
         
     
-    def setZero(self,ch):
+    def setZero(self,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         self.channels[ch][self.aliases[0]].resetCounter()
         self.channels[ch][self.aliases[1]].resetCounter()
         
         
-    def stop(self,ch):
+    def stop(self,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         if self.mThread.isAlive():
@@ -242,8 +261,10 @@ class AGUC8(object):
         self.channels[ch][self.aliases[1]].stop()
         
     
-    def followApath(self,ch,path):
+    def followApath(self,path,ch='def'):
         
+        if ch == 'def':
+            ch = ch=self.defChannel
         self.chchch(ch)
         
         steps = []
