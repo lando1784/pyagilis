@@ -35,7 +35,7 @@ class AGPort(s.Serial):
             super(AGPort,self).__init__(portName,921600,s.EIGHTBITS,s.PARITY_NONE,s.STOPBITS_ONE)
             self.soul = 'p'
         except Exception as e:
-            print(e.message)
+            print('I could not find or open the port you specified: {0}'.format(portName))
             self.soul = None
             return None
     
@@ -60,10 +60,11 @@ class AGPort(s.Serial):
     def sendString(self,command):
         
         response = ''
-        self.write(command)
+        bCommand = bytes(command,'UTF-8')
+        self.write(bCommand)
         if self.isAquery(command):
             response = self.readline()
-        return  response
+        return response
     
     
  

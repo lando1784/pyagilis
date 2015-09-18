@@ -27,7 +27,7 @@ class Axis(object):
         self.controller = controller
         self.name = name
         self.rate = rate
-        self.stepAmp = str(stepAmp) if 0<stepAmp<=50 else str(50)
+        self.stepAmp = str(stepAmp) if 0<int(stepAmp)<=50 else str(50)
         self.controller.port.sendString(name+'SU+'+self.stepAmp+'\r\n')
         self.controller.port.sendString(name+'SU-'+self.stepAmp+'\r\n')
         

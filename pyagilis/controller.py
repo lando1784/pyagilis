@@ -11,10 +11,9 @@
 #
 
 from channel import Axis,RATE
-from agPort import AGPort
 from mothreading import MotorThread
 
-from time import time,sleep
+from pyagilis.agPort import AGPort
 
 
 class AGUC2(object):
@@ -26,13 +25,12 @@ class AGUC2(object):
         
         self.aliases = [axis1alias,axis2alias]
         
-        self.addAxis('1',axis1alias,stepAmp1)
-        self.addAxis('2',axis2alias,stepAmp2)
-        
         self.mThread = MotorThread()
         
         if not self.port.amInull():
             self.port.sendString('MR\n')
+            self.addAxis('1',axis1alias,stepAmp1)
+            self.addAxis('2',axis2alias,stepAmp2)
         
         
     def addAxis(self,name,alias,stepAmp):
@@ -133,16 +131,14 @@ class AGUC8(object):
         
         self.defChannel = activeChannels[0]
         
-        for c in activeChannels:
-            self.addAxis(c,'1',axis1alias,stepAmp1)
-            self.addAxis(c,'2',axis2alias,stepAmp2)
-        
-        self.mThread = MotorThread()
-        
         if not self.port.amInull():
             self.port.sendString('MR\r\n')
+            for c in activeChannels:
+                self.port.sendString('CC'+str(c)+'\r\n')
+                self.addAxis(c,'1',axis1alias,stepAmp1)
+                self.addAxis(c,'2',axis2alias,stepAmp2)
             self.port.sendString('CC'+str(activeChannels[0])+'\r\n')
-            self
+            self.mThread = MotorThread()
         
         
     def chchch(self,ch):
