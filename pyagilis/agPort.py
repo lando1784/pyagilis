@@ -18,7 +18,7 @@
 import serial as s
 from datetime import datetime
 
-## Documentatio for the AGPort class
+## Documentation for the AGPort class
 #
 # This class extend the python Serial class with some function that simplifies its use with the agilis controllers commands
 class AGPort(s.Serial):
@@ -39,11 +39,12 @@ class AGPort(s.Serial):
             self.soul = None
             return None
     
-        
+    ## Checks if the port has been successfully opened
     def amInull(self):
         return self.soul is None
     
-    
+    ## Checks whether the string you sent is supposed to get an answer or not
+    # @param command The string you want to send to the serial port
     def isAquery(self,command):
         
         if self.amInull():
@@ -56,7 +57,8 @@ class AGPort(s.Serial):
                 return True
         return False
     
-    
+    ## Sends the command you want to the port and, if it's supposed to get an answer it returns the response
+    # @params command The string you want to send to the serial port
     def sendString(self,command):
         
         response = ''
