@@ -44,32 +44,32 @@ class Axis(object):
     
     ## Stops the axis
     def stop(self):
-        self.controller.port.sendString(self.name+'ST\n')
+        self.controller.port.sendString(self.name+'ST\r\n')
         self.__lastOp__ = 'stopped'
     
     ## Check every "rate" milliseconds whether the motor is still or not
     # @param rate The length in milliseconds of the interval between two consecutive checks of the motor state during a movement
     def amIstill(self,rate):
-        
+
         while True:
-            if self.controller.port.sendString(self.name+'TS\n').find('0') != -1:
+            if str(self.controller.port.sendString(self.name+'TS\r\n')).find('0') != -1:
                 return True
             sleep(0.001*rate)
             
     ## Check whether the motor's limit switch is on or not
     def amIatMyLimit(self):
         
-        return self.controller.port.sendString('PH\n').find(self.name) != -1 or self.controller.port.sendString('PH\n').find('3') != -1
+        return self.controller.port.sendString('PH\r\n').find(self.name) != -1 or self.controller.port.sendString('PH\r\n').find('3') != -1
         
     ## Returns the number of accumulated steps in forward direction minus the number of steps in backward direction since powering the controller or since the last counter reset
     def queryCounter(self):
         
-        return int(self.controller.port.sendString(self.name+'TP\n')[3:])
+        return int(self.controller.port.sendString(self.name+'TP\r\n')[3:])
     
     ## Reset the step counter for the axis
     def resetCounter(self):
         
-        self.controller.port.sendString(self.name+'ZP\n')
+        self.controller.port.sendString(self.name+'ZP\r\n')
         self.__lastOp__ = 'reset'
         
     ## Takes "steps" steps in the direction specified by the sign of the "steps parameter"

@@ -28,7 +28,7 @@ class AGUC2(object):
         self.mThread = MotorThread()
         
         if not self.port.amInull():
-            self.port.sendString('MR\n')
+            self.port.sendString('MR\r\n')
             self.addAxis('1',axis1alias,stepAmp1)
             self.addAxis('2',axis2alias,stepAmp2)
         
