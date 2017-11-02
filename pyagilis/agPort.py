@@ -15,8 +15,10 @@
 # for the agilis controllers 
 #
 
-import serial as s
 from datetime import datetime
+
+import serial as s
+
 
 ## Documentation for the AGPort class
 #
@@ -67,6 +69,3 @@ class AGPort(s.Serial):
         if self.isAquery(command):
             response = self.readline()
         return response
-    
-    
- 

@@ -16,6 +16,7 @@
 
 from threading import Thread
 
+
 class MotorThread(Thread):
     
     stop_at_next_check = False

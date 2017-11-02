@@ -10,10 +10,9 @@
 #
 #
 
-from channel import Axis,RATE
-from mothreading import MotorThread
-
-from pyagilis.agPort import AGPort
+from .agPort import AGPort
+from .channel import RATE, Axis
+from .mothreading import MotorThread
 
 
 class AGUC2(object):
