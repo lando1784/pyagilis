@@ -24,20 +24,22 @@ from datetime import datetime
 class AGPort(s.Serial):
     
     ## Class constructor
-    # @param portName The name of the virtual serial port of the chosen controller
-    def __init__(self,portName = None):
+    # @param portName String: The name of the virtual serial port of the chosen controller
+    # @param testRead Boolean: If true when reading it will read byte by byte and print the result (for a maximum of 16 bytes)
+    def __init__(self,portName = None, testRead = False):
         
         if portName == None:
             ## @var AGPort.soul
             self.soul = None
-            return None
+            return
         try:
             super(AGPort,self).__init__(portName,921600,s.EIGHTBITS,s.PARITY_NONE,s.STOPBITS_ONE)
             self.soul = 'p'
         except Exception as e:
             print('I could not find or open the port you specified: {0}'.format(portName))
             self.soul = None
-            return None
+            return
+        self._testRead = testRead
     
     ## Checks if the port has been successfully opened
     def amInull(self):
@@ -65,7 +67,16 @@ class AGPort(s.Serial):
         bCommand = bytes(command,'UTF-8')
         self.write(bCommand)
         if self.isAquery(command):
-            response = self.readline()
+            if not self._testRead:
+                response = self.readline().decode('utf-8')
+            else:
+                for i in range(16):
+                    try:
+                        x = self.read(1).decode('utf-8')
+                        print(x)
+                    except Exception as e:
+                        print(e)
+                return ""
         return response
     
     

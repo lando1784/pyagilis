@@ -10,17 +10,16 @@
 #
 #
 
-from channel import Axis,RATE
-from mothreading import MotorThread
-
-from pyagilis.agPort import AGPort
+from .channel import Axis,RATE
+from .mothreading import MotorThread
+from .agPort import AGPort
 
 
 class AGUC2(object):
     
-    def __init__(self,portName, axis1alias = 'X', axis2alias = 'Y', stepAmp1 = 50, stepAmp2 = 50):
+    def __init__(self,portName, axis1alias = 'X', axis2alias = 'Y', stepAmp1 = 50, stepAmp2 = 50, testRead = False):
         
-        self.port = AGPort(portName)
+        self.port = AGPort(portName,testRead)
         self.axis = {}
         
         self.aliases = [axis1alias,axis2alias]
