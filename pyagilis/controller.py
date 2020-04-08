@@ -10,6 +10,7 @@
 #
 #
 
+
 from .agPort import AGPort
 from .channel import RATE, Axis
 from .mothreading import MotorThread
@@ -17,9 +18,9 @@ from .mothreading import MotorThread
 
 class AGUC2(object):
     
-    def __init__(self,portName, axis1alias = 'X', axis2alias = 'Y', stepAmp1 = 50, stepAmp2 = 50):
+    def __init__(self,portName, axis1alias = 'X', axis2alias = 'Y', stepAmp1 = 50, stepAmp2 = 50, testRead = False):
         
-        self.port = AGPort(portName)
+        self.port = AGPort(portName,testRead)
         self.axis = {}
         
         self.aliases = [axis1alias,axis2alias]
