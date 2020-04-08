@@ -10,9 +10,10 @@
 #
 #
 
-from .channel import Axis,RATE
-from .mothreading import MotorThread
+
 from .agPort import AGPort
+from .channel import RATE, Axis
+from .mothreading import MotorThread
 
 
 class AGUC2(object):
@@ -27,7 +28,7 @@ class AGUC2(object):
         self.mThread = MotorThread()
         
         if not self.port.amInull():
-            self.port.sendString('MR\n')
+            self.port.sendString('MR\r\n')
             self.addAxis('1',axis1alias,stepAmp1)
             self.addAxis('2',axis2alias,stepAmp2)
         
